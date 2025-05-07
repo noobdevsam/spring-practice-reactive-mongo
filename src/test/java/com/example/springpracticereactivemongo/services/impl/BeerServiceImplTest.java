@@ -52,4 +52,12 @@ class BeerServiceImplTest {
 		assertThat(saved_beer).isNotNull();
 		assertThat(saved_beer.id()).isNotNull();
 	}
+	
+	@Test
+	@DisplayName("Test save new beer using block")
+	void test_save_new_beer_use_blocking() {
+		var saved_dto = getSavedBeerDTO();
+		assertThat(saved_dto).isNotNull();
+		assertThat(saved_dto.id()).isNotNull();
+	}
 }
