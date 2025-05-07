@@ -1,7 +1,6 @@
 package com.example.springpracticereactivemongo.services.impl;
 
 import com.example.springpracticereactivemongo.model.BeerDTO;
-import com.example.springpracticereactivemongo.repositories.BeerRepository;
 import com.example.springpracticereactivemongo.services.BeerService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,6 @@ class BeerServiceImplTest {
 	
 	@Autowired
 	BeerService beerService;
-	
-	@Autowired
-	BeerRepository beerRepository;
 	
 	public static BeerDTO getTestBeerDTO() {
 		return new BeerDTO("Space Dust", "IPA", "213514", 15, BigDecimal.TEN);
@@ -90,11 +86,23 @@ class BeerServiceImplTest {
 				         // fetch the updated beer
 				         beerService.getBeerById(saved_updated_dto.id())
 			)
-			.subscribe(dto_from_db -> atomic_dto.set(dto_from_db));
+			.subscribe(atomic_dto::set);
 		
 		await().until(() -> atomic_dto.get() != null);
 		assertThat(atomic_dto.get().beerName()).isEqualTo(newName);
 		
+	}
+	
+	@Test
+	@DisplayName("Test delete beer by id")
+	void test_delete_beer_by_id() {
+		var beer_to_delete = getSavedBeerDTO();
+		
+		beerService.deleteBeerById(beer_to_delete.id()).block();
+		
+		var expected_empty_mono = beerService.getBeerById(beer_to_delete.id());
+		
+		assertThat(expected_empty_mono.block()).isNull();
 	}
 	
 }
