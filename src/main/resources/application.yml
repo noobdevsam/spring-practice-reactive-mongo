@@ -1,0 +1,8 @@
+spring:
+    application:
+        name: spring-practice-reactive-mongo
+
+    data:
+        mongodb:
+            uri: ${MONGODB_URL}
+            database: ${MONGODB_DATABASE}
