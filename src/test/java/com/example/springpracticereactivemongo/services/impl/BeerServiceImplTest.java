@@ -60,4 +60,19 @@ class BeerServiceImplTest {
 		assertThat(saved_dto).isNotNull();
 		assertThat(saved_dto.id()).isNotNull();
 	}
+	
+	@Test
+	@DisplayName("Test find beer by id after updating")
+	void test_update_blocking() {
+		final String newName = "New Beer Name";
+		var saved_dto = getSavedBeerDTO();
+		
+		var new_dto = new BeerDTO(newName, saved_dto.beerStyle(), saved_dto.upc(), saved_dto.quantityOnHand(), saved_dto.price());
+		var updated_dto = beerService.updateBeer(saved_dto.id(), new_dto)
+			                  .block();
+		
+		var fetched_dto = beerService.getBeerById(updated_dto.id()).block();
+		assertThat(fetched_dto.beerName()).isEqualTo(newName);
+	}
+	
 }
