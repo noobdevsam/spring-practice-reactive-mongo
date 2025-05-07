@@ -7,5 +7,5 @@ public interface BeerService {
 	
 	Mono<BeerDTO> getBeerById(String id);
 	
-	Mono<BeerDTO> createBeer(BeerDTO beerDTO);
+	Mono<BeerDTO> createBeer(Mono<BeerDTO> beerDTO);
 }
