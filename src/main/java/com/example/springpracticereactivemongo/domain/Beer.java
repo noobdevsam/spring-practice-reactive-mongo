@@ -1,9 +1,15 @@
 package com.example.springpracticereactivemongo.domain;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Document
 public record Beer(
+	
+	@Id
 	String id,
 	String beerName,
 	String beerStyle,
