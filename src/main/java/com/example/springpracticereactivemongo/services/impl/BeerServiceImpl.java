@@ -14,7 +14,7 @@ public class BeerServiceImpl implements BeerService {
 	}
 	
 	@Override
-	public Mono<BeerDTO> createBeer(BeerDTO beerDTO) {
+	public Mono<BeerDTO> createBeer(Mono<BeerDTO> beerDTO) {
 		return null;
 	}
 	
