@@ -8,6 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 class BeerServiceImplTest {
@@ -20,13 +23,15 @@ class BeerServiceImplTest {
 	}
 	
 	@Test
-	void test_save_new_beer() throws InterruptedException {
+	void test_save_new_beer() {
+		var atomic_bool = new AtomicBoolean(false);
 		var saved_mono = beerService.createBeer(Mono.just(getTestBeerDTO()));
 		
 		saved_mono.subscribe(saved -> {
 			System.out.println("Saved beer: " + saved.toString());
+			atomic_bool.set(true);
 		});
 		
-		Thread.sleep(1000);
+		await().untilTrue(atomic_bool);
 	}
 }
