@@ -29,6 +29,10 @@ class BeerServiceImplTest {
 		return new BeerDTO("Space Dust", "IPA", "213514", 15, BigDecimal.TEN);
 	}
 	
+	public BeerDTO getSavedBeerDTO() {
+		return beerService.createBeer(Mono.just(getTestBeerDTO())).block();
+	}
+	
 	@Test
 	@DisplayName("Test save new beer using subscriber")
 	void test_save_new_beer_use_subscriber() {
