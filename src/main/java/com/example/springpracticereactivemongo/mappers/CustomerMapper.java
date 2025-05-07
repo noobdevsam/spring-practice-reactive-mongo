@@ -4,7 +4,7 @@ import com.example.springpracticereactivemongo.domain.Customer;
 import com.example.springpracticereactivemongo.model.CustomerDTO;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CustomerMapper {
 	CustomerDTO customerToCustomerDTO(Customer customer);
 	

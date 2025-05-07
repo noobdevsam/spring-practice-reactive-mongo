@@ -4,7 +4,7 @@ import com.example.springpracticereactivemongo.domain.Beer;
 import com.example.springpracticereactivemongo.model.BeerDTO;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BeerMapper {
 	BeerDTO beerToBeerDTO(Beer beer);
 	
