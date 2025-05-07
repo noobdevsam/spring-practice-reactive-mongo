@@ -75,4 +75,26 @@ class BeerServiceImplTest {
 		assertThat(fetched_dto.beerName()).isEqualTo(newName);
 	}
 	
+	@Test
+	@DisplayName("Test find beer by id using subscriber")
+	void test_update_streams() {
+		final String newName = "New Beer Name";
+		var atomic_dto = new AtomicReference<BeerDTO>();
+		
+		beerService.createBeer(Mono.just(getTestBeerDTO()))
+			.map(saved_dto -> new BeerDTO(newName, saved_dto.beerStyle(), saved_dto.upc(), saved_dto.quantityOnHand(),
+				saved_dto.price())
+			)
+			.flatMap(beerService::saveBeer)
+			.flatMap(saved_updated_dto ->
+				         // fetch the updated beer
+				         beerService.getBeerById(saved_updated_dto.id())
+			)
+			.subscribe(dto_from_db -> atomic_dto.set(dto_from_db));
+		
+		await().until(() -> atomic_dto.get() != null);
+		assertThat(atomic_dto.get().beerName()).isEqualTo(newName);
+		
+	}
+	
 }
