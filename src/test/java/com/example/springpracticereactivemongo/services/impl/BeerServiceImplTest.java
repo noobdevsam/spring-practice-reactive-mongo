@@ -31,12 +31,26 @@ class BeerServiceImplTest {
 	
 	@Test
 	@DisplayName("Test find beer by beer name")
-	void test_find_by_first_name() {
+	void test_find_by_beer_name() {
 		var beer_dto = getSavedBeerDTO();
 		var atomic_bool = new AtomicBoolean(false);
 		var found_dto = beerService.findFirstByBeerName(beer_dto.beerName());
 		
 		found_dto.subscribe(dto -> {
+			System.out.println("Found beer: " + dto.toString());
+			atomic_bool.set(true);
+		});
+		
+		await().untilTrue(atomic_bool);
+	}
+	
+	@Test
+	@DisplayName("Test find beer by beer style")
+	void test_find_by_beer_style() {
+		var beer_dto = getSavedBeerDTO();
+		var atomic_bool = new AtomicBoolean(false);
+		
+		beerService.findByBeerStyle(beer_dto.beerStyle()).subscribe(dto -> {
 			System.out.println("Found beer: " + dto.toString());
 			atomic_bool.set(true);
 		});
