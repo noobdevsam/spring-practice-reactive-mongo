@@ -10,7 +10,9 @@ public interface BeerService {
 	
 	Mono<BeerDTO> getBeerById(String id);
 	
-	Mono<BeerDTO> createBeer(Mono<BeerDTO> beerDTO);
+	Mono<BeerDTO> findFirstByBeerName(String beerName);
+	
+	Mono<BeerDTO> saveBeer(Mono<BeerDTO> beerDTO);
 	
 	Mono<BeerDTO> saveBeer(BeerDTO beerDTO);
 	

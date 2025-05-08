@@ -26,7 +26,22 @@ class BeerServiceImplTest {
 	}
 	
 	public BeerDTO getSavedBeerDTO() {
-		return beerService.createBeer(Mono.just(getTestBeerDTO())).block();
+		return beerService.saveBeer(Mono.just(getTestBeerDTO())).block();
+	}
+	
+	@Test
+	@DisplayName("Test find beer by beer name")
+	void test_find_by_first_name() {
+		var beer_dto = getSavedBeerDTO();
+		var atomic_bool = new AtomicBoolean(false);
+		var found_dto = beerService.findFirstByBeerName(beer_dto.beerName());
+		
+		found_dto.subscribe(dto -> {
+			System.out.println("Found beer: " + dto.toString());
+			atomic_bool.set(true);
+		});
+		
+		await().untilTrue(atomic_bool);
 	}
 	
 	@Test
@@ -34,7 +49,7 @@ class BeerServiceImplTest {
 	void test_save_new_beer_use_subscriber() {
 		var atomic_bool = new AtomicBoolean(false);
 		var atomic_ref = new AtomicReference<BeerDTO>(); // for further testing
-		var saved_mono = beerService.createBeer(Mono.just(getTestBeerDTO()));
+		var saved_mono = beerService.saveBeer(Mono.just(getTestBeerDTO()));
 		
 		saved_mono.subscribe(saved -> {
 			System.out.println("Saved beer: " + saved.toString());
@@ -77,7 +92,7 @@ class BeerServiceImplTest {
 		final String newName = "New Beer Name";
 		var atomic_dto = new AtomicReference<BeerDTO>();
 		
-		beerService.createBeer(Mono.just(getTestBeerDTO()))
+		beerService.saveBeer(Mono.just(getTestBeerDTO()))
 			.map(saved_dto -> new BeerDTO(newName, saved_dto.beerStyle(), saved_dto.upc(), saved_dto.quantityOnHand(),
 				saved_dto.price())
 			)
