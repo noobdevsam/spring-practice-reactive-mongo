@@ -30,6 +30,20 @@ class BeerServiceImplTest {
 	}
 	
 	@Test
+	void test_find_by_first_name() {
+		var beer_dto = getSavedBeerDTO();
+		var atomic_bool = new AtomicBoolean(false);
+		var found_dto = beerService.findFirstByBeerName(beer_dto.beerName());
+		
+		found_dto.subscribe(dto -> {
+			System.out.println("Found beer: " + dto.toString());
+			atomic_bool.set(true);
+		});
+		
+		await().untilTrue(atomic_bool);
+	}
+	
+	@Test
 	@DisplayName("Test save new beer using subscriber")
 	void test_save_new_beer_use_subscriber() {
 		var atomic_bool = new AtomicBoolean(false);
