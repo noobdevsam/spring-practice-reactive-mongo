@@ -6,3 +6,12 @@ spring:
         mongodb:
             uri: ${MONGODB_URL}
             database: ${MONGODB_DATABASE}
+
+logging:
+    level:
+        org:
+            springframework:
+                data:
+                    mongodb:
+                        core:
+                            ReactiveMongoTemplate: DEBUG
