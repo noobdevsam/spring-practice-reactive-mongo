@@ -30,6 +30,7 @@ class BeerServiceImplTest {
 	}
 	
 	@Test
+	@DisplayName("Test find beer by beer name")
 	void test_find_by_first_name() {
 		var beer_dto = getSavedBeerDTO();
 		var atomic_bool = new AtomicBoolean(false);
