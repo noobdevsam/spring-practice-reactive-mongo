@@ -36,6 +36,12 @@ public class BeerServiceImpl implements BeerService {
 	}
 	
 	@Override
+	public Mono<BeerDTO> findFirstByBeerName(String beerName) {
+		return beerRepository.findFirstByBeerName(beerName)
+			       .map(beerMapper::beerToBeerDTO);
+	}
+	
+	@Override
 	public Mono<BeerDTO> saveBeer(Mono<BeerDTO> beerDTO) {
 		return beerDTO
 			       .map(beerMapper::beerDTOToBeer)
