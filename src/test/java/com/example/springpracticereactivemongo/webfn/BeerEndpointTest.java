@@ -1,5 +1,6 @@
 package com.example.springpracticereactivemongo.webfn;
 
+import com.example.springpracticereactivemongo.model.BeerDTO;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -8,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -28,8 +29,48 @@ class BeerEndpointTest {
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().valueEquals("Content-type", "application/json")
-			.expectBody().jsonPath("$.size()", hasSize(greaterThan(1)));
+			.expectBody().jsonPath("$.size()").value(greaterThan(1));
 	}
 	
+	@Test
+	@Order(2)
+	void test_get_beer_by_id() {
+		
+		var beerDTO = getSavedTestBeer();
+		
+		webTestClient.get()
+			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
+			.exchange()
+			.expectStatus().isOk()
+			.expectHeader().valueEquals("Content-type", "application/json")
+			.expectBody(BeerDTO.class);
+	}
+
+//	@Test
+//	@Order(3)
+//	void test_get_beer_by_id_not_found() {
+//		webTestClient.get()
+//			.uri(BeerRouterConfig.BEER_ID_PATH, "999")
+//			.exchange()
+//			.expectStatus().isNotFound();
+//	}
+	
+	public BeerDTO getSavedTestBeer() {
+		var beerDTOFluxExchangeResult = webTestClient.post()
+			                                .uri(BeerRouterConfig.BEER_PATH)
+			                                .body(Mono.just(new BeerDTO("Test Beer")), BeerDTO.class)
+			                                .header("Content-type", "application/json")
+			                                .exchange()
+			                                .returnResult(BeerDTO.class);
+		
+		var location = beerDTOFluxExchangeResult.getResponseHeaders().get("Location");
+		
+		return webTestClient.get()
+			       .uri(BeerRouterConfig.BEER_PATH)
+			       .exchange()
+			       .returnResult(BeerDTO.class)
+			       .getResponseBody()
+			       .blockFirst();
+	}
 	
 }
