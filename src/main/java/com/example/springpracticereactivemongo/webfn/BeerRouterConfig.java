@@ -21,19 +21,20 @@ public class BeerRouterConfig {
 	}
 	
 	/**
-	 * Defines the routing configuration for beer-related HTTP requests.
+	 * Configures the routing for beer-related HTTP requests.
 	 *
-	 * @return a `RouterFunction<ServerResponse>` that maps HTTP GET requests
-	 * to the `listBeers` handler method in `BeerHandler`.
-	 * The route accepts requests with `application/json` media type
-	 * and responds with a list of beers.
+	 * @return a `RouterFunction<ServerResponse>` that defines the routes for handling
+	 * beer-related operations. The routes include:
+	 * - A GET request to `BEER_PATH` to retrieve a list of beers, handled by `listBeers`.
+	 * - A GET request to `BEER_ID_PATH` to retrieve a specific beer by its ID, handled by `getBeerById`.
+	 * Both routes accept requests with `application/json` media type.
 	 */
 	@Bean
 	public RouterFunction<ServerResponse> beerRoutes() {
 		return route()
 			       .GET(BEER_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::listBeers)
+			       .GET(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::getBeerById)
 			       .build();
 	}
-	
 	
 }
