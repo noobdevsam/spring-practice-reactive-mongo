@@ -45,15 +45,20 @@ class BeerEndpointTest {
 			.expectHeader().valueEquals("Content-type", "application/json")
 			.expectBody(BeerDTO.class);
 	}
-
-//	@Test
-//	@Order(3)
-//	void test_get_beer_by_id_not_found() {
-//		webTestClient.get()
-//			.uri(BeerRouterConfig.BEER_ID_PATH, "999")
-//			.exchange()
-//			.expectStatus().isNotFound();
-//	}
+	
+	@Test
+	@Order(3)
+	void test_create_new_beer() {
+		var testDTO = getSavedTestBeer();
+		
+		webTestClient.post()
+			.uri(BeerRouterConfig.BEER_PATH)
+			.body(Mono.just(testDTO), BeerDTO.class)
+			.header("Content-type", "application/json")
+			.exchange()
+			.expectStatus().isCreated()
+			.expectHeader().exists("location");
+	}
 	
 	public BeerDTO getSavedTestBeer() {
 		var beerDTOFluxExchangeResult = webTestClient.post()
