@@ -60,4 +60,22 @@ public class BeerHandler {
 					                .build()
 			       );
 	}
+	
+	/**
+	 * Handles an HTTP PUT request to update an existing beer by its ID.
+	 *
+	 * @param request the incoming HTTP request containing the beer ID as a path variable
+	 *                and the updated beer details in the request body
+	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
+	 * that the beer was successfully updated. The beer details are extracted
+	 * from the request body as a `BeerDTO` object and updated using the
+	 * `beerService.updateBeer()` method.
+	 */
+	public Mono<ServerResponse> updateBeerById(ServerRequest request) {
+		return request.bodyToMono(BeerDTO.class)
+			       .flatMap(
+				       beerDTO -> beerService.updateBeer(request.pathVariable("id"), beerDTO)
+			       )
+			       .flatMap(_ -> ServerResponse.noContent().build());
+	}
 }
