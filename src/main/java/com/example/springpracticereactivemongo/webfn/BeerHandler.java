@@ -96,4 +96,17 @@ public class BeerHandler {
 			       )
 			       .flatMap(_ -> ServerResponse.noContent().build());
 	}
+	
+	/**
+	 * Handles an HTTP DELETE request to delete a beer by its ID.
+	 *
+	 * @param request the incoming HTTP request containing the beer ID as a path variable
+	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
+	 * that the beer was successfully deleted. The deletion is performed
+	 * using the `beerService.deleteBeerById()` method.
+	 */
+	public Mono<ServerResponse> deleteBeerById(ServerRequest request) {
+		return beerService.deleteBeerById(request.pathVariable("id"))
+			       .then(ServerResponse.noContent().build());
+	}
 }
