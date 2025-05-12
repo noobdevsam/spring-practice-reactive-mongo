@@ -30,6 +30,7 @@ public class BeerRouterConfig {
 	 *         - A POST request to `BEER_PATH` to create a new beer, handled by `createNewBeer`.
 	 *         - A PUT request to `BEER_ID_PATH` to update an existing beer by its ID, handled by `updateBeerById`.
 	 *         - A PATCH request to `BEER_ID_PATH` to partially update an existing beer by its ID, handled by `patchBeerById`.
+	 *         - A DELETE request to `BEER_ID_PATH` to delete a beer by its ID, handled by `deleteBeerById`.
 	 *         All routes accept requests with `application/json` media type.
 	 */
 	@Bean
@@ -40,6 +41,7 @@ public class BeerRouterConfig {
 			       .POST(BEER_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::createNewBeer)
 			       .PUT(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::updateBeerById)
 			       .PATCH(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::patchBeerById)
+			       .DELETE(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::deleteBeerById)
 			       .build();
 	}
 	
