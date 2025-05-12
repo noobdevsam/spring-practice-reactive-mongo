@@ -28,6 +28,7 @@ public class BeerRouterConfig {
 	 *         - A GET request to `BEER_PATH` to retrieve a list of beers, handled by `listBeers`.
 	 *         - A GET request to `BEER_ID_PATH` to retrieve a specific beer by its ID, handled by `getBeerById`.
 	 *         - A POST request to `BEER_PATH` to create a new beer, handled by `createNewBeer`.
+	 *         - A PUT request to `BEER_ID_PATH` to update an existing beer by its ID, handled by `updateBeerById`.
 	 *         All routes accept requests with `application/json` media type.
 	 */
 	@Bean
@@ -36,6 +37,7 @@ public class BeerRouterConfig {
 			       .GET(BEER_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::listBeers)
 			       .GET(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::getBeerById)
 			       .POST(BEER_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::createNewBeer)
+			       .PUT(BEER_ID_PATH, accept(MediaType.APPLICATION_JSON), beerHandler::updateBeerById)
 			       .build();
 	}
 	
