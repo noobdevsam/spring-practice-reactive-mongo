@@ -5,6 +5,7 @@ import com.example.springpracticereactivemongo.services.BeerService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -41,5 +42,22 @@ public class BeerHandler {
 	public Mono<ServerResponse> getBeerById(ServerRequest request) {
 		return ServerResponse.ok()
 			       .body(beerService.getBeerById(request.pathVariable("id")), BeerDTO.class);
+	}
+	
+	/**
+	 * Handles an HTTP POST request to create a new beer.
+	 *
+	 * @param request the incoming HTTP request containing the beer details in the request body
+	 * @return a `Mono<ServerResponse>` containing the HTTP 201 response with the location
+	 * of the newly created beer resource in the `Location` header.
+	 * The beer details are extracted from the request body as a `BeerDTO` object
+	 * and saved using the `beerService.saveBeer()` method.
+	 */
+	public Mono<ServerResponse> createNewBeer(ServerRequest request) {
+		return beerService.saveBeer(request.bodyToMono(BeerDTO.class))
+			       .flatMap(beerDTO ->
+				                ServerResponse.created(UriComponentsBuilder.fromPath(BeerRouterConfig.BEER_ID_PATH).build(beerDTO.id()))
+					                .build()
+			       );
 	}
 }
