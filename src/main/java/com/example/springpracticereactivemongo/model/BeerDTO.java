@@ -29,6 +29,10 @@ public record BeerDTO(
 		this(null, beerName, null, null, null, null, null, null);
 	}
 	
+	public BeerDTO(String id, String beerName) {
+		this(id, beerName, null, null, null, null, null, null);
+	}
+	
 	public BeerDTO(
 		String beerName,
 		String beerStyle,
