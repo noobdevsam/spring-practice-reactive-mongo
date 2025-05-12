@@ -73,8 +73,26 @@ public class BeerHandler {
 	 */
 	public Mono<ServerResponse> updateBeerById(ServerRequest request) {
 		return request.bodyToMono(BeerDTO.class)
-			       .flatMap(
+			       .map(
 				       beerDTO -> beerService.updateBeer(request.pathVariable("id"), beerDTO)
+			       )
+			       .flatMap(_ -> ServerResponse.noContent().build());
+	}
+	
+	/**
+	 * Handles an HTTP PATCH request to partially update an existing beer by its ID.
+	 *
+	 * @param request the incoming HTTP request containing the beer ID as a path variable
+	 *                and the partial beer details in the request body
+	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
+	 * that the beer was successfully updated. The partial beer details are
+	 * extracted from the request body as a `BeerDTO` object and updated using
+	 * the `beerService.patchBeer()` method.
+	 */
+	public Mono<ServerResponse> patchBeerById(ServerRequest request) {
+		return request.bodyToMono(BeerDTO.class)
+			       .map(
+				       beerDTO -> beerService.patchBeer(request.pathVariable("id"), beerDTO)
 			       )
 			       .flatMap(_ -> ServerResponse.noContent().build());
 	}
