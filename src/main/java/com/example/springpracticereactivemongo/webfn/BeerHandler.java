@@ -89,6 +89,7 @@ public class BeerHandler {
 	 */
 	public Mono<ServerResponse> createNewBeer(ServerRequest request) {
 		return beerService.saveBeer(request.bodyToMono(BeerDTO.class))
+			       .doOnNext(this::validate)
 			       .flatMap(beerDTO ->
 				                ServerResponse.created(UriComponentsBuilder.fromPath(BeerRouterConfig.BEER_ID_PATH).build(beerDTO.id()))
 					                .build()
@@ -111,6 +112,7 @@ public class BeerHandler {
 	 */
 	public Mono<ServerResponse> updateBeerById(ServerRequest request) {
 		return request.bodyToMono(BeerDTO.class)
+			       .doOnNext(this::validate)
 			       .flatMap(
 				       beerDTO -> beerService.updateBeer(request.pathVariable("id"), beerDTO)
 			       )
@@ -134,6 +136,7 @@ public class BeerHandler {
 	 */
 	public Mono<ServerResponse> patchBeerById(ServerRequest request) {
 		return request.bodyToMono(BeerDTO.class)
+			       .doOnNext(this::validate)
 			       .flatMap(
 				       beerDTO -> beerService.patchBeer(request.pathVariable("id"), beerDTO)
 			       )
