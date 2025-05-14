@@ -133,6 +133,41 @@ class BeerEndpointTest {
 			.expectStatus().isNotFound();
 	}
 	
+	@Test
+	@Order(11)
+	void test_create_new_beer_bad_data() {
+		webTestClient.post()
+			.uri(BeerRouterConfig.BEER_PATH)
+			.body(Mono.just(new BeerDTO("")), BeerDTO.class)
+			.header("Content-type", "application/json")
+			.exchange()
+			.expectStatus().isBadRequest();
+	}
+	
+	@Test
+	@Order(12)
+	void test_update_beer_bad_data() {
+		var beerDTO = getSavedTestBeer();
+		
+		webTestClient.put()
+			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
+			.body(Mono.just(new BeerDTO(beerDTO.id(), "")), BeerDTO.class)
+			.exchange()
+			.expectStatus().isBadRequest();
+	}
+	
+	@Test
+	@Order(13)
+	void test_patch_beer_bad_data() {
+		var beerDTO = getSavedTestBeer();
+		
+		webTestClient.patch()
+			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
+			.body(Mono.just(new BeerDTO(beerDTO.id(), "")), BeerDTO.class)
+			.exchange()
+			.expectStatus().isBadRequest();
+	}
+	
 	public BeerDTO getSavedTestBeer() {
 		var beerDTOFluxExchangeResult = webTestClient.post()
 			                                .uri(BeerRouterConfig.BEER_PATH)
