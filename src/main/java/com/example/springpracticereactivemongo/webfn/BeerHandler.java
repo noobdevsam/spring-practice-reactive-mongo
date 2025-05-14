@@ -119,13 +119,20 @@ public class BeerHandler {
 	/**
 	 * Handles an HTTP DELETE request to delete a beer by its ID.
 	 *
+	 * This method processes a DELETE request where the beer ID is provided as a path variable.
+	 * It first checks if the beer exists using the `beerService.getBeerById` method. If the beer
+	 * is not found, it throws a `ResponseStatusException` with an HTTP 404 status. If the beer
+	 * exists, it proceeds to delete the beer using the `beerService.deleteBeerById` method.
+	 *
 	 * @param request the incoming HTTP request containing the beer ID as a path variable
-	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
-	 * that the beer was successfully deleted. The deletion is performed
-	 * using the `beerService.deleteBeerById()` method.
+	 * @return a `Mono<ServerResponse>` containing:
+	 *         - HTTP 204 response indicating that the beer was successfully deleted.
+	 *         - HTTP 404 response if the beer is not found.
 	 */
 	public Mono<ServerResponse> deleteBeerById(ServerRequest request) {
-		return beerService.deleteBeerById(request.pathVariable("id"))
+		return beerService.getBeerById(request.pathVariable("id"))
+			       .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+			       .flatMap(beerDTO -> beerService.deleteBeerById(beerDTO.id()))
 			       .then(ServerResponse.noContent().build());
 	}
 }

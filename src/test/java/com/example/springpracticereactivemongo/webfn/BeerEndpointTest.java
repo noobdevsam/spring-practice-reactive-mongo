@@ -124,6 +124,15 @@ class BeerEndpointTest {
 			.expectStatus().isNotFound();
 	}
 	
+	@Test
+	@Order(10)
+	void test_delete_beer_not_found() {
+		webTestClient.delete()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
 	public BeerDTO getSavedTestBeer() {
 		var beerDTOFluxExchangeResult = webTestClient.post()
 			                                .uri(BeerRouterConfig.BEER_PATH)
