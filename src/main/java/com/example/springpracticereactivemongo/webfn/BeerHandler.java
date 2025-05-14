@@ -73,12 +73,16 @@ public class BeerHandler {
 	/**
 	 * Handles an HTTP PUT request to update an existing beer by its ID.
 	 *
+	 * This method processes a PUT request where the beer ID is provided as a path variable,
+	 * and the updated beer details are included in the request body. It uses the
+	 * `beerService.updateBeer` method to update the beer details. If the beer is not found,
+	 * it throws a `ResponseStatusException` with an HTTP 404 status.
+	 *
 	 * @param request the incoming HTTP request containing the beer ID as a path variable
 	 *                and the updated beer details in the request body
-	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
-	 * that the beer was successfully updated. The beer details are extracted
-	 * from the request body as a `BeerDTO` object and updated using the
-	 * `beerService.updateBeer()` method.
+	 * @return a `Mono<ServerResponse>` containing:
+	 *         - HTTP 204 response indicating that the beer was successfully updated.
+	 *         - HTTP 404 response if the beer is not found.
 	 */
 	public Mono<ServerResponse> updateBeerById(ServerRequest request) {
 		return request.bodyToMono(BeerDTO.class)
@@ -92,18 +96,23 @@ public class BeerHandler {
 	/**
 	 * Handles an HTTP PATCH request to partially update an existing beer by its ID.
 	 *
+	 * This method processes a PATCH request where the beer ID is provided as a path variable,
+	 * and the partial beer details are included in the request body. It uses the
+	 * `beerService.patchBeer` method to apply the partial updates to the beer details.
+	 * If the beer is not found, it throws a `ResponseStatusException` with an HTTP 404 status.
+	 *
 	 * @param request the incoming HTTP request containing the beer ID as a path variable
 	 *                and the partial beer details in the request body
-	 * @return a `Mono<ServerResponse>` containing the HTTP 204 response indicating
-	 * that the beer was successfully updated. The partial beer details are
-	 * extracted from the request body as a `BeerDTO` object and updated using
-	 * the `beerService.patchBeer()` method.
+	 * @return a `Mono<ServerResponse>` containing:
+	 *         - HTTP 204 response indicating that the beer was successfully updated.
+	 *         - HTTP 404 response if the beer is not found.
 	 */
 	public Mono<ServerResponse> patchBeerById(ServerRequest request) {
 		return request.bodyToMono(BeerDTO.class)
-			       .map(
+			       .flatMap(
 				       beerDTO -> beerService.patchBeer(request.pathVariable("id"), beerDTO)
 			       )
+			       .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
 			       .flatMap(_ -> ServerResponse.noContent().build());
 	}
 	

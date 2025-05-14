@@ -114,6 +114,16 @@ class BeerEndpointTest {
 			.expectStatus().isNotFound();
 	}
 	
+	@Test
+	@Order(9)
+	void test_patch_beer_not_found() {
+		webTestClient.patch()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.body(Mono.just(new BeerDTO("1999", "Patched Beer")), BeerDTO.class)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
 	public BeerDTO getSavedTestBeer() {
 		var beerDTOFluxExchangeResult = webTestClient.post()
 			                                .uri(BeerRouterConfig.BEER_PATH)
