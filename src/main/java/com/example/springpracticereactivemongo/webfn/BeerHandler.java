@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -48,14 +49,24 @@ public class BeerHandler {
 	/**
 	 * Handles an HTTP GET request to retrieve a list of beers.
 	 *
+	 * This method processes a GET request to fetch a list of beers. If a query parameter
+	 * "beerStyle" is provided, it filters the beers by the specified style using the
+	 * `beerService.findByBeerStyle` method. Otherwise, it retrieves all beers using
+	 * the `beerService.findAll` method. The response is returned as an HTTP 200 status
+	 * with the list of beers in the response body.
+	 *
 	 * @param request the incoming HTTP request
-	 * @return a `Mono<ServerResponse>` containing the HTTP 200 response with the list of beers
-	 * in the response body. The response body is populated with a reactive stream
-	 * of `BeerDTO` objects provided by the `beerService.findAll()` method.
+	 * @return a `Mono<ServerResponse>` containing:
+	 *         - HTTP 200 response with the list of beers in the response body.
+	 *         - The response body is populated with a reactive stream of `BeerDTO` objects.
 	 */
 	public Mono<ServerResponse> listBeers(ServerRequest request) {
+		Flux<BeerDTO> flux = request.queryParam("beerStyle")
+			.map(beerService::findByBeerStyle)
+			.orElseGet(beerService::findAll);
+		
 		return ServerResponse.ok()
-			       .body(beerService.findAll(), BeerDTO.class);
+			       .body(flux, BeerDTO.class);
 	}
 	
 	/**
