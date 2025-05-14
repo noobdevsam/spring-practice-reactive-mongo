@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 @SpringBootTest
@@ -166,6 +170,25 @@ class BeerEndpointTest {
 			.body(Mono.just(new BeerDTO(beerDTO.id(), "")), BeerDTO.class)
 			.exchange()
 			.expectStatus().isBadRequest();
+	}
+	
+	@Test
+	@Order(14)
+	void test_list_beers_by_style() {
+		webTestClient.post()
+			.uri(BeerRouterConfig.BEER_PATH)
+			.body(Mono.just(new BeerDTO("Test Beer 2", "TEST", "4689464", 8, BigDecimal.TEN)), BeerDTO.class)
+			.header("Content-type", "application/json")
+			.exchange();
+		
+		webTestClient.get()
+			.uri(
+				UriComponentsBuilder.fromPath(BeerRouterConfig.BEER_PATH).queryParam("beerStyle", "TEST").build().toUri()
+			)
+			.exchange()
+			.expectStatus().isOk()
+			.expectHeader().valueEquals("Content-type", "application/json")
+			.expectBody().jsonPath("$.size()").value(equalTo(1));
 	}
 	
 	public BeerDTO getSavedTestBeer() {
