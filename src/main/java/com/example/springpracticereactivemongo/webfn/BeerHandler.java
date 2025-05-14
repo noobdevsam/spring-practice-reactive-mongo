@@ -4,9 +4,13 @@ import com.example.springpracticereactivemongo.model.BeerDTO;
 import com.example.springpracticereactivemongo.services.BeerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
@@ -14,9 +18,30 @@ import reactor.core.publisher.Mono;
 public class BeerHandler {
 	
 	private final BeerService beerService;
+	private final Validator validator;
 	
-	public BeerHandler(BeerService beerService) {
+	public BeerHandler(BeerService beerService, Validator validator) {
 		this.beerService = beerService;
+		this.validator = validator;
+	}
+	
+	/**
+	 * Validates the given BeerDTO object.
+	 * <p>
+	 * This method uses a Validator to validate the provided BeerDTO object.
+	 * If validation errors are found, a ServerWebInputException is thrown
+	 * with the details of the validation errors.
+	 *
+	 * @param beerDTO the BeerDTO object to validate
+	 * @throws ServerWebInputException if validation errors are found
+	 */
+	private void validate(BeerDTO beerDTO) {
+		Errors errors = new BeanPropertyBindingResult(beerDTO, "beerDTO");
+		validator.validate(beerDTO, errors);
+		
+		if (errors.hasErrors()) {
+			throw new ServerWebInputException(errors.toString());
+		}
 	}
 	
 	
