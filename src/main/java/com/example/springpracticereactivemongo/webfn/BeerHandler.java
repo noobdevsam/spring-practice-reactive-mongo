@@ -2,9 +2,11 @@ package com.example.springpracticereactivemongo.webfn;
 
 import com.example.springpracticereactivemongo.model.BeerDTO;
 import com.example.springpracticereactivemongo.services.BeerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
@@ -41,7 +43,9 @@ public class BeerHandler {
 	 */
 	public Mono<ServerResponse> getBeerById(ServerRequest request) {
 		return ServerResponse.ok()
-			       .body(beerService.getBeerById(request.pathVariable("id")), BeerDTO.class);
+			       .body(beerService.getBeerById(request.pathVariable("id"))
+				             .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND))),
+				       BeerDTO.class);
 	}
 	
 	/**
