@@ -61,13 +61,10 @@ public class BeerHandler {
 	 *         - The response body is populated with a reactive stream of `BeerDTO` objects.
 	 */
 	public Mono<ServerResponse> listBeers(ServerRequest request) {
-		Flux<BeerDTO> flux;
+		Flux<BeerDTO> flux = request.queryParam("beerStyle")
+			.map(beerService::findByBeerStyle)
+			.orElseGet(beerService::findAll);
 		
-		if (request.queryParam("beerStyle").isPresent()) {
-			flux = beerService.findByBeerStyle(request.queryParam("beerStyle").get());
-		} else {
-			flux = beerService.findAll();
-		}
 		return ServerResponse.ok()
 			       .body(flux, BeerDTO.class);
 	}
