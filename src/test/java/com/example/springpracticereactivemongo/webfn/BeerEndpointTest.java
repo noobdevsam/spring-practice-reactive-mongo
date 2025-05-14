@@ -95,6 +95,44 @@ class BeerEndpointTest {
 			.expectStatus().isNoContent();
 	}
 	
+	@Test
+	@Order(7)
+	void test_get_beer_by_id_not_found() {
+		webTestClient.get()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
+	@Test
+	@Order(8)
+	void test_update_beer_not_found() {
+		webTestClient.put()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.body(Mono.just(new BeerDTO("1999", "Updated Beer")), BeerDTO.class)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
+	@Test
+	@Order(9)
+	void test_patch_beer_not_found() {
+		webTestClient.patch()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.body(Mono.just(new BeerDTO("1999", "Patched Beer")), BeerDTO.class)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
+	@Test
+	@Order(10)
+	void test_delete_beer_not_found() {
+		webTestClient.delete()
+			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
 	public BeerDTO getSavedTestBeer() {
 		var beerDTOFluxExchangeResult = webTestClient.post()
 			                                .uri(BeerRouterConfig.BEER_PATH)
