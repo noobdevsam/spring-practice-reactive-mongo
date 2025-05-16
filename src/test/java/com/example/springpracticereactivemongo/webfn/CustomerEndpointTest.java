@@ -1,12 +1,15 @@
 package com.example.springpracticereactivemongo.webfn;
 
+import com.example.springpracticereactivemongo.model.CustomerDTO;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import static org.hamcrest.Matchers.greaterThan;
 
@@ -19,6 +22,7 @@ class CustomerEndpointTest {
 	WebTestClient webClient;
 	
 	@Test
+	@Order(1)
 	void test_list_customers() {
 		webClient.get()
 			.uri(CustomerRouterConfig.CUSTOMER_PATH)
@@ -26,5 +30,39 @@ class CustomerEndpointTest {
 			.expectStatus().isOk()
 			.expectHeader().valueEquals("Content-Type", "application/json")
 			.expectBody().jsonPath("$.size()").value(greaterThan(1));
+	}
+	
+	@Test
+	@Order(2)
+	void test_get_customer_by_id() {
+		var dto = getSavedTestCustomer();
+		
+		webClient.get()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, dto.id())
+			.exchange()
+			.expectStatus().isOk()
+			.expectHeader().valueEquals("Content-Type", "application/json")
+			.expectBody(CustomerDTO.class);
+	}
+	
+	public CustomerDTO getSavedTestCustomer() {
+		var customerDTOFluxExchangeResult = webClient.post()
+			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
+			                                    .body(Mono.just(new CustomerDTO("test")), CustomerDTO.class)
+			                                    .header("Content-Type", "application/json")
+			                                    .exchange()
+			                                    .returnResult(CustomerDTO.class);
+		
+		var location = customerDTOFluxExchangeResult.getResponseHeaders().get("Location");
+		
+		if (location != null) {
+			return webClient.get()
+				       .uri(location.getFirst())
+				       .exchange()
+				       .returnResult(CustomerDTO.class)
+				       .getResponseBody().blockFirst();
+		}
+		
+		return null;
 	}
 }
