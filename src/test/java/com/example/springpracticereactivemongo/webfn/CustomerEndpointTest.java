@@ -45,6 +45,19 @@ class CustomerEndpointTest {
 			.expectBody(CustomerDTO.class);
 	}
 	
+	@Test
+	@Order(3)
+	void test_create_customer() {
+		webClient.post()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH)
+			.body(Mono.just(new CustomerDTO("test 2")), CustomerDTO.class)
+			.header("Content-Type", "application/json")
+			.exchange()
+			.expectStatus().isCreated()
+			.expectHeader().exists("Location");
+		
+	}
+	
 	public CustomerDTO getSavedTestCustomer() {
 		var customerDTOFluxExchangeResult = webClient.post()
 			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
