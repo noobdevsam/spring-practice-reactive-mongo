@@ -113,6 +113,16 @@ class CustomerEndpointTest {
 			.expectStatus().isBadRequest();
 	}
 	
+	
+	@Test
+	@Order(9)
+	void test_delete_customer_not_found() {
+		webClient.delete()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, 999)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
 	public CustomerDTO getSavedTestCustomer() {
 		var customerDTOFluxExchangeResult = webClient.post()
 			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
