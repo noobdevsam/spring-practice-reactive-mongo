@@ -66,6 +66,7 @@ class CustomerEndpointTest {
 		webClient.put()
 			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, dto.id())
 			.body(Mono.just(new CustomerDTO("test 3")), CustomerDTO.class)
+			.header("Content-Type", "application/json")
 			.exchange()
 			.expectStatus().isNoContent();
 	}
