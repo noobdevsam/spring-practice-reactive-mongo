@@ -70,6 +70,17 @@ class CustomerEndpointTest {
 			.expectStatus().isNoContent();
 	}
 	
+	@Test
+	@Order(5)
+	void test_delete_customer() {
+		var dto = getSavedTestCustomer();
+		
+		webClient.delete()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, dto.id())
+			.exchange()
+			.expectStatus().isNoContent();
+	}
+	
 	public CustomerDTO getSavedTestCustomer() {
 		var customerDTOFluxExchangeResult = webClient.post()
 			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
