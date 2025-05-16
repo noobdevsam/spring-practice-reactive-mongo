@@ -90,6 +90,16 @@ class CustomerEndpointTest {
 			.expectStatus().isNotFound();
 	}
 	
+	@Test
+	@Order(7)
+	void test_update_customer_not_found() {
+		webClient.put()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, 999)
+			.body(Mono.just(new CustomerDTO("test 4")), CustomerDTO.class)
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+	
 	public CustomerDTO getSavedTestCustomer() {
 		var customerDTOFluxExchangeResult = webClient.post()
 			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
