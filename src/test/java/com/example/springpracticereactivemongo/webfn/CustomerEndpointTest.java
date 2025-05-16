@@ -58,6 +58,18 @@ class CustomerEndpointTest {
 		
 	}
 	
+	@Test
+	@Order(4)
+	void test_update_customer() {
+		var dto = getSavedTestCustomer();
+		
+		webClient.put()
+			.uri(CustomerRouterConfig.CUSTOMER_PATH_ID, dto.id())
+			.body(Mono.just(new CustomerDTO("test 3")), CustomerDTO.class)
+			.exchange()
+			.expectStatus().isNoContent();
+	}
+	
 	public CustomerDTO getSavedTestCustomer() {
 		var customerDTOFluxExchangeResult = webClient.post()
 			                                    .uri(CustomerRouterConfig.CUSTOMER_PATH)
