@@ -202,7 +202,7 @@ class BeerEndpointTest {
 		var location = beerDTOFluxExchangeResult.getResponseHeaders().get("Location");
 		
 		return webTestClient.get()
-			       .uri(BeerRouterConfig.BEER_PATH)
+			       .uri(location.getFirst())
 			       .exchange()
 			       .returnResult(BeerDTO.class)
 			       .getResponseBody()
