@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockOAuth2Login;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -28,7 +29,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(1)
 	void test_list_beers() {
-		webTestClient.get()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.get()
 			.uri(BeerRouterConfig.BEER_PATH)
 			.exchange()
 			.expectStatus().isOk()
@@ -39,10 +42,10 @@ class BeerEndpointTest {
 	@Test
 	@Order(2)
 	void test_get_beer_by_id() {
-		
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.get()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.get()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.exchange()
 			.expectStatus().isOk()
@@ -54,8 +57,9 @@ class BeerEndpointTest {
 	@Order(3)
 	void test_create_new_beer() {
 		var testDTO = getSavedTestBeer();
-		
-		webTestClient.post()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.post()
 			.uri(BeerRouterConfig.BEER_PATH)
 			.body(Mono.just(testDTO), BeerDTO.class)
 			.header("Content-type", "application/json")
@@ -68,8 +72,9 @@ class BeerEndpointTest {
 	@Order(4)
 	void test_update_beer() {
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.put()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.put()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.body(Mono.just(new BeerDTO(beerDTO.id(), "Updated Beer")), BeerDTO.class)
 			.exchange()
@@ -80,8 +85,9 @@ class BeerEndpointTest {
 	@Order(5)
 	void test_patch_beer_by_id() {
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.patch()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.patch()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.body(Mono.just(new BeerDTO(beerDTO.id(), "Patched Beer")), BeerDTO.class)
 			.exchange()
@@ -92,8 +98,9 @@ class BeerEndpointTest {
 	@Order(6)
 	void test_delete_beer_by_id() {
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.delete()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.delete()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.exchange()
 			.expectStatus().isNoContent();
@@ -102,7 +109,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(7)
 	void test_get_beer_by_id_not_found() {
-		webTestClient.get()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.get()
 			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
 			.exchange()
 			.expectStatus().isNotFound();
@@ -111,7 +120,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(8)
 	void test_update_beer_not_found() {
-		webTestClient.put()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.put()
 			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
 			.body(Mono.just(new BeerDTO("1999", "Updated Beer")), BeerDTO.class)
 			.exchange()
@@ -121,7 +132,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(9)
 	void test_patch_beer_not_found() {
-		webTestClient.patch()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.patch()
 			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
 			.body(Mono.just(new BeerDTO("1999", "Patched Beer")), BeerDTO.class)
 			.exchange()
@@ -131,7 +144,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(10)
 	void test_delete_beer_not_found() {
-		webTestClient.delete()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.delete()
 			.uri(BeerRouterConfig.BEER_ID_PATH, 1999)
 			.exchange()
 			.expectStatus().isNotFound();
@@ -140,7 +155,9 @@ class BeerEndpointTest {
 	@Test
 	@Order(11)
 	void test_create_new_beer_bad_data() {
-		webTestClient.post()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.post()
 			.uri(BeerRouterConfig.BEER_PATH)
 			.body(Mono.just(new BeerDTO("")), BeerDTO.class)
 			.header("Content-type", "application/json")
@@ -152,8 +169,9 @@ class BeerEndpointTest {
 	@Order(12)
 	void test_update_beer_bad_data() {
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.put()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.put()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.body(Mono.just(new BeerDTO(beerDTO.id(), "")), BeerDTO.class)
 			.exchange()
@@ -164,8 +182,9 @@ class BeerEndpointTest {
 	@Order(13)
 	void test_patch_beer_bad_data() {
 		var beerDTO = getSavedTestBeer();
-		
-		webTestClient.patch()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.patch()
 			.uri(BeerRouterConfig.BEER_ID_PATH, beerDTO.id())
 			.body(Mono.just(new BeerDTO(beerDTO.id(), "")), BeerDTO.class)
 			.exchange()
@@ -175,13 +194,17 @@ class BeerEndpointTest {
 	@Test
 	@Order(14)
 	void test_list_beers_by_style() {
-		webTestClient.post()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.post()
 			.uri(BeerRouterConfig.BEER_PATH)
 			.body(Mono.just(new BeerDTO("Test Beer 2", "TEST", "4689464", 8, BigDecimal.TEN)), BeerDTO.class)
 			.header("Content-type", "application/json")
 			.exchange();
 		
-		webTestClient.get()
+		webTestClient
+			.mutateWith(mockOAuth2Login())
+			.get()
 			.uri(
 				UriComponentsBuilder.fromPath(BeerRouterConfig.BEER_PATH).queryParam("beerStyle", "TEST").build().toUri()
 			)
@@ -192,7 +215,9 @@ class BeerEndpointTest {
 	}
 	
 	public BeerDTO getSavedTestBeer() {
-		var beerDTOFluxExchangeResult = webTestClient.post()
+		var beerDTOFluxExchangeResult = webTestClient
+			                                .mutateWith(mockOAuth2Login())
+			                                .post()
 			                                .uri(BeerRouterConfig.BEER_PATH)
 			                                .body(Mono.just(new BeerDTO("Test Beer")), BeerDTO.class)
 			                                .header("Content-type", "application/json")
@@ -201,7 +226,9 @@ class BeerEndpointTest {
 		
 		var location = beerDTOFluxExchangeResult.getResponseHeaders().get("Location");
 		
-		return webTestClient.get()
+		return webTestClient
+			       .mutateWith(mockOAuth2Login())
+			       .get()
 			       .uri(location.getFirst())
 			       .exchange()
 			       .returnResult(BeerDTO.class)
@@ -210,3 +237,4 @@ class BeerEndpointTest {
 	}
 	
 }
+
