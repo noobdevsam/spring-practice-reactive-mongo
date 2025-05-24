@@ -7,6 +7,14 @@ spring:
             uri: ${MONGODB_URL}
             database: ${MONGODB_DATABASE}
 
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${OAUTH2_ISSUER_URI}
+
+#Test the application with postman and use jwt token in the header
+
 logging:
     level:
         org:
