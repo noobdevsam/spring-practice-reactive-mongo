@@ -7,6 +7,12 @@ spring:
             uri: ${MONGODB_URL}
             database: ${MONGODB_DATABASE}
 
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${OAUTH2_ISSUER_URI}
+
 logging:
     level:
         org:
