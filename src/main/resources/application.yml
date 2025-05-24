@@ -13,6 +13,8 @@ spring:
                 jwt:
                     issuer-uri: ${OAUTH2_ISSUER_URI}
 
+#Test the application with postman and use jwt token in the header
+
 logging:
     level:
         org:
