@@ -23,3 +23,5 @@ logging:
                     mongodb:
                         core:
                             ReactiveMongoTemplate: DEBUG
+server:
+    port: 8083
