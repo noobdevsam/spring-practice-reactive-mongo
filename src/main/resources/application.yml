@@ -1,17 +1,28 @@
 spring:
     application:
         name: spring-practice-reactive-mongo
-
+    
     data:
         mongodb:
             uri: ${MONGODB_URL}
             database: ${MONGODB_DATABASE}
-
+    
     security:
         oauth2:
             resourceserver:
                 jwt:
                     issuer-uri: ${OAUTH2_ISSUER_URI}
+
+management:
+    endpoint:
+        health:
+            probes:
+                enabled: true
+    health:
+        livenessstate:
+            enabled: true
+        readinessstate:
+            enabled: true
 
 #Test the application with postman and use jwt token in the header
 
