@@ -34,5 +34,8 @@ logging:
                     mongodb:
                         core:
                             ReactiveMongoTemplate: DEBUG
+            zalando:
+                logbook:
+                    Logbook: trace
 server:
     port: 8083
