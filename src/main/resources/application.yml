@@ -4,14 +4,14 @@ spring:
     
     data:
         mongodb:
-            uri: ${MONGODB_URL}
-            database: ${MONGODB_DATABASE}
+            uri: mongodb://${MONGODB_HOST:localhost}:27017
+            database: ${MONGODB_DATABASE:test-db}
     
     security:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${OAUTH2_ISSUER_URI}
+                    issuer-uri: ${OAUTH2_ISSUER_URI:http://localhost:9000}
 
 management:
     endpoint:
